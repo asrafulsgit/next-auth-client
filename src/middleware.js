@@ -1,8 +1,12 @@
 import { NextResponse } from 'next/server'
+import { getToken } from "next-auth/jwt";
 
-export function middleware(request) {
-  const token = request.cookies.get('token')?.value;
-
+export async function middleware(request) {
+  //  const accessToken = request.cookies.get("nextAuthAccesstoken")?.value;
+  //  console.log(accessToken)
+  //  console.log('object')
+  const token = await getToken({req : request, secret: process.env.NEXTAUTH_SECRET });
+  
   const isRootPath = request.nextUrl.pathname === '/';
 
   if (isRootPath && !token) {

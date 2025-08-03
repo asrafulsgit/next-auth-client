@@ -1,9 +1,13 @@
 'use client'
 
+import { signIn } from "next-auth/react";
+
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function LoginPage() {
+  const router = useRouter();
   const [loginInfo, setLoginInfo] = useState({ email: '', password: '' });
 
   const handleChange = (e) => {
@@ -11,7 +15,7 @@ export default function LoginPage() {
     setLoginInfo({ ...loginInfo, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
     const { email, password } = loginInfo;
 
@@ -19,6 +23,22 @@ export default function LoginPage() {
       // toast.error("Email and password are required");
       return;
     }
+
+
+  const res = await signIn("credentials", {
+    redirect: false,  
+    email : loginInfo.email,
+    password : loginInfo.password,
+  });
+
+  if (res?.error) {
+    console.log("Login failed:", res.error);
+    // Optionally show toast here
+  } else {
+    console.log("Login successful");
+    router.push('/')
+    // Optionally redirect: router.push("/dashboard");
+  }
 
   };
   return (

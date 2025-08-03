@@ -1,26 +1,34 @@
 'use client'
 
+import axios from "axios";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function RegisterPage() {
-  const [loginInfo, setLoginInfo] = useState({ email: '', password: '' });
+    const router = useRouter();
+  const [loginInfo, setLoginInfo] = useState({name : '', email: '', password: '' });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setLoginInfo({ ...loginInfo, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const { email, password } = loginInfo;
-
-    if (!email || !password) {
+    if (!loginInfo.name.trim() || !loginInfo.email.trim() || !loginInfo.password.trim()) {
       // toast.error("Email and password are required");
       return;
     }
-
+    try {
+      await axios.post("http://localhost:8000/api/v1/user/register", loginInfo);
+      router.push("/login");
+    } catch (err) {
+      console.log(err.response?.data?.message || "Registration failed");
+    }
   };
+
+
   return (
     <>
       <div className="flex justify-center items-center min-h-[90vh]">
