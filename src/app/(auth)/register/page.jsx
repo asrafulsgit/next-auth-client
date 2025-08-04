@@ -23,10 +23,11 @@ export default function RegisterPage() {
     }
     setLoading(true);
     try {
-      await axios.post("http://localhost:8000/api/v1/user/register", loginInfo);
+      await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL }/api/v1/user/register`, loginInfo);
       toast.success('Registration Successfull');
       router.push("/login");
     } catch (err) {
+      console.log(err)
       toast.error(err.response?.data?.message || "Registration failed");
     }finally{
       setLoading(false);
