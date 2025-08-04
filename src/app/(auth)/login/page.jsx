@@ -5,11 +5,12 @@ import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import toast from "react-hot-toast";
 
 export default function LoginPage() {
   const router = useRouter();
   const [loginInfo, setLoginInfo] = useState({ email: '', password: '' });
-
+  const [loading,setLoading] = useState(false);
   const handleChange = (e) => {
     const { name, value } = e.target;
     setLoginInfo({ ...loginInfo, [name]: value });
@@ -20,11 +21,11 @@ export default function LoginPage() {
     const { email, password } = loginInfo;
 
     if (!email || !password) {
-      // toast.error("Email and password are required");
+      toast.error("Email and password are required");
       return;
     }
 
-
+    setLoading(true);
   const res = await signIn("credentials", {
     redirect: false,  
     email : loginInfo.email,
@@ -32,12 +33,12 @@ export default function LoginPage() {
   });
 
   if (res?.error) {
-    console.log("Login failed:", res.error);
-    // Optionally show toast here
+    toast.error('Login Failed with an error. try Again!')
+    setLoading(false);
   } else {
-    console.log("Login successful");
+    toast.success("Login successful")
     router.push('/')
-    // Optionally redirect: router.push("/dashboard");
+    setLoading(false);
   }
 
   };
@@ -74,7 +75,7 @@ export default function LoginPage() {
             />
 </div>
             <button type="submit" className="btn px-3 cursor-pointer py-2 w-full rounded-xl bg-[#5c3bd3] 
-            text-white mt-4">Login</button>
+            text-white mt-4">{loading? 'Loging...' :'Login'}</button>
           </form>
           
             <p className="text-sm opacity-80 mt-1">
